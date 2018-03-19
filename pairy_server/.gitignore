@@ -88,3 +88,4 @@ logs/
 *.pem
 .DS_Store
 server_log.txt
+.env
