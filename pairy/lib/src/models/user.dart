@@ -8,6 +8,9 @@ part 'user.serializer.g.dart';
 @serializable
 class _User extends Model {
   String githubId, name, avatar;
+  int repoCount, followerCount, followingCount;
+  List<String> languages;
+  List<Repo> popularRepos, stars;
 }
 
 @Serializable(autoIdAndDateFields: false)

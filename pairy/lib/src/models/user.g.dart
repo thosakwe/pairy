@@ -12,6 +12,12 @@ class User extends _User {
       this.githubId,
       this.name,
       this.avatar,
+      this.repoCount,
+      this.followerCount,
+      this.followingCount,
+      this.languages,
+      this.popularRepos,
+      this.stars,
       this.createdAt,
       this.updatedAt});
 
@@ -28,6 +34,24 @@ class User extends _User {
   final String avatar;
 
   @override
+  final int repoCount;
+
+  @override
+  final int followerCount;
+
+  @override
+  final int followingCount;
+
+  @override
+  final List<String> languages;
+
+  @override
+  final List<dynamic> popularRepos;
+
+  @override
+  final List<dynamic> stars;
+
+  @override
   final DateTime createdAt;
 
   @override
@@ -38,6 +62,12 @@ class User extends _User {
       String githubId,
       String name,
       String avatar,
+      int repoCount,
+      int followerCount,
+      int followingCount,
+      List<String> languages,
+      List<dynamic> popularRepos,
+      List<dynamic> stars,
       DateTime createdAt,
       DateTime updatedAt}) {
     return new User(
@@ -45,6 +75,12 @@ class User extends _User {
         githubId: githubId ?? this.githubId,
         name: name ?? this.name,
         avatar: avatar ?? this.avatar,
+        repoCount: repoCount ?? this.repoCount,
+        followerCount: followerCount ?? this.followerCount,
+        followingCount: followingCount ?? this.followingCount,
+        languages: languages ?? this.languages,
+        popularRepos: popularRepos ?? this.popularRepos,
+        stars: stars ?? this.stars,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt);
   }
