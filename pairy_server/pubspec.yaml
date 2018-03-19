@@ -2,7 +2,7 @@ description: An easily-extensible web server framework in Dart.
 homepage: https://github.com/angel-dart/angel
 name: pairy_server
 publish_to: none
-dependencies: 
+dependencies:
   angel_auth: ^1.1.0
   angel_configuration: ^1.1.0
   angel_cors: ^1.0.0
@@ -16,7 +16,7 @@ dependencies:
     git: https://github.com/thosakwe/oauth2.git
   pairy:
     path: ../pairy
-dev_dependencies: 
+dev_dependencies:
   angel_hot: ^1.1.0
   angel_test: ^1.1.0
   console: ^2.2.4

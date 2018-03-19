@@ -45,7 +45,10 @@ Future configureServer(Angel app) async {
             callback: (req, res, jwt) async => jwt,
           )));
 
-  await app.configure(services.configureServer);
+  var db = new Db(app.configuration['mongo_db']);
+  await db.open();
+
+  await app.configure(services.configureServer(db));
   await app.configure(routes.configureServer(const LocalFileSystem()));
 }
 
@@ -91,7 +94,8 @@ class GithubAuthStrategy extends AuthStrategy {
       Uri.parse(githubConfig['redirect_uri']),
       scopes: scopes,
     );
-    return res.redirect(redirectUri.toString());
+    res.redirect(redirectUri.toString());
+    return true;
   }
 
   Future authenticateCallback(
@@ -122,6 +126,8 @@ class GithubAuthStrategy extends AuthStrategy {
         avatar: githubUser.avatarUrl,
       );
     }
+
+    // TODO: Include all fields, or find some other creative way to fetch them on-the-fly.
 
     if (withUserId.isEmpty) {
       return await userService

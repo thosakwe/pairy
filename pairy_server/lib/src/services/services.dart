@@ -1,7 +1,8 @@
 library pairy_server.services;
 
-import 'dart:async';
 import 'package:angel_framework/angel_framework.dart';
+import 'package:mongo_dart/mongo_dart.dart';
+import 'user.dart' as user;
 
 /// Configure our application to use *services*.
 /// Services must be wired to the app via `app.use`.
@@ -11,4 +12,8 @@ import 'package:angel_framework/angel_framework.dart';
 ///
 /// Read more here:
 /// https://github.com/angel-dart/angel/wiki/Service-Basics
-Future configureServer(Angel app) async {}
+AngelConfigurer configureServer(Db db) {
+  return (Angel app) async {
+    await app.configure(user.configureServer(db));
+  };
+}
