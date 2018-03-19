@@ -7,7 +7,10 @@
       <excludeFolder url="file://$MODULE_DIR$/pairy/build" />
     </content>
     <content url="file://$MODULE_DIR$/pairy_mobile" />
-    <content url="file://$MODULE_DIR$/pairy_server" />
+    <content url="file://$MODULE_DIR$/pairy_server">
+      <excludeFolder url="file://$MODULE_DIR$/pairy_server/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/pairy_server/build" />
+    </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Dart SDK" level="project" />
     <orderEntry type="library" name="Dart Packages" level="project" />
