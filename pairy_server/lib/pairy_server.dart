@@ -39,11 +39,40 @@ Future configureServer(Angel app) async {
   app.get('/auth/github', auth.authenticate('github'));
   app.get(
       '/auth/github/callback',
-      auth.authenticate(
-          'github',
-          new AngelAuthOptions(
-            callback: (req, res, jwt) async => jwt,
-          )));
+      auth.authenticate('github', new AngelAuthOptions(
+        callback: (req, res, jwt) async {
+          var uri = new Uri(
+            scheme: 'pairy',
+            host: 'auth.callback',
+            path: 'token',
+            queryParameters: {
+              'jwt': jwt,
+            },
+          );
+
+          return res.redirect(uri.toString());
+
+          res.headers['content-type'] = 'text/html';
+          res.write('''
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Authentication Success</title>
+  </head>
+  <body>
+    <noscript>You must enable JavaScript for Pairy sign-in to work!</noscript>
+    <script>
+      if (window.confirm('Sign-in successful. Hit "YES" to go back to Pairy.')) {
+        window.open('${uri.toString()}');
+        window.close();
+      }
+    </script>
+  </body>
+</html>
+''');
+          res.end();
+        },
+      )));
 
   var db = new Db(app.configuration['mongo_db']);
   await db.open();
@@ -93,6 +122,7 @@ class GithubAuthStrategy extends AuthStrategy {
     var redirectUri = createGrant().getAuthorizationUrl(
       Uri.parse(githubConfig['redirect_uri']),
       scopes: scopes,
+      state: req.query['state'],
     );
     res.redirect(redirectUri.toString());
     return true;

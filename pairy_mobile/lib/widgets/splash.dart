@@ -1,8 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class Splash extends StatelessWidget {
+class Splash extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return new _SplashState();
+  }
+}
+
+class _SplashState extends State<Splash> {
+
+  static const MethodChannel channel =
+      const MethodChannel('com.thosakwe.pairy/url');
+
+  @override
+  void initState() {
+    super.initState();
+
+    channel.setMethodCallHandler((call) {
+      if (call.method == 'url' && call.arguments is String) {
+        try {
+          var uri = Uri.parse(call.arguments);
+          var jwt = uri.queryParameters['jwt'];
+
+          if (jwt?.isNotEmpty != true) throw uri;
+
+          Navigator.push(context, new MaterialPageRoute(
+            builder: (_) {
+              return new Scaffold(
+                appBar: new AppBar(
+                  title: const Text('YEEEE'),
+                ),
+                body: new Center(
+                  child: new Text(jwt),
+                ),
+              );
+            },
+          ));
+        } catch (_) {
+          showDialog(
+            context: context,
+            child: new AlertDialog(
+              title: const Text('Error'),
+              content: const Text('Invalid options.'),
+            ),
+          );
+        }
+      }
+    });
+  }
+
+  @override
+  void deactivate() {
+    new FlutterWebviewPlugin().close();
+    super.deactivate();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -33,30 +89,42 @@ class Splash extends StatelessWidget {
             new RaisedButton.icon(
               elevation: 0.0,
               onPressed: () async {
-                var webview = new FlutterWebviewPlugin();
+                try {
+                  var url = 'http://127.0.0.1:3000/auth/github';
+                  var w = new FlutterWebviewPlugin();
 
-                webview.onUrlChanged.listen((str) async {
-                  if (str.contains('auth/github/callback')) {
+                  w.onUrlChanged.listen((url) {
+                    var uri = Uri.parse(url);
+                    if (uri.scheme == 'pairy')
+                      w.close();
+                  });
+
+                  await w.launch(url, withJavascript: true);
+
+                  /*
+                  Navigator.push(context, new MaterialPageRoute(builder: (_) {
+                    return new WebviewScaffold(
+                      url: url,
+                      appBar: new AppBar(
+                        title: const Text('Sign In'),
+                      ),
+                    );
+                  }));*/
+                  /*if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
                     showDialog(
                       context: context,
                       child: new AlertDialog(
-                        title: const Text('YEAHHHH'),
-                        content: new Text(await webview
-                            .evalJavascript('window.document.body.outerHTML')),
+                        title: const Text('Launch Error'),
+                        content: new Text("Can't launch URL $url."),
                       ),
                     );
-                  }
-                });
+                  }*/
+                } on PlatformException catch (e) {
+                  //print('msg: ${e.message}, code: ${e.code}, d: ${e.details}');
 
-                Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
-                  return new WebviewScaffold(
-                    url: 'http://localhost:3000/auth/github',
-                    withJavascript: true,
-                    appBar: new AppBar(
-                      title: const Text('Sign In'),
-                    ),
-                  );
-                }));
+                }
               },
               color: Colors.white,
               icon: new Icon(
